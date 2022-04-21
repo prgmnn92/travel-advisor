@@ -1,10 +1,18 @@
-import React from "react";
+import React, { useState } from "react";
 import { AppBar, Toolbar, Typography, InputBase, Box } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import { alpha } from "@mui/material";
 import { Autocomplete } from "@react-google-maps/api";
 
-export default function Header() {
+export default function Header({ setCoordinates }) {
+  const [autocomplete, setAutocomplete] = useState(null);
+
+  const onLoad = (autoC) => setAutocomplete(autoC);
+  const onPlaceChanged = () => {
+    const lat = autocomplete.getPlace().geometry.location.lat();
+    const lng = autocomplete.getPlace().geometry.location.lng();
+    setCoordinates({ lat, lng });
+  };
   return (
     <AppBar position="static">
       <Toolbar
@@ -36,7 +44,7 @@ export default function Header() {
           >
             Explore new places
           </Typography>
-          {/* <Autocomplete> */}
+          <Autocomplete onLoad={onLoad} onPlaceChanged={onPlaceChanged}>
             <Box>
               <Box
                 sx={{
@@ -75,7 +83,7 @@ export default function Header() {
                 />
               </Box>
             </Box>
-          {/* </Autocomplete> */}
+          </Autocomplete>
         </Box>
       </Toolbar>
     </AppBar>

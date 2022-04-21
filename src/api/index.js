@@ -16,22 +16,15 @@ const options = {
   },
 };
 
-axios
-  .request(options)
-  .then(function(response) {
-    console.log(response.data);
-  })
-  .catch(function(error) {
-    console.error(error);
-  });
 
-export const getPlacesData = async (sw, ne) => {
+
+export const getPlacesData = async (sw, ne, type) => {
     if(!sw || !ne) return
   try {
     //req
     const {
       data: { data },
-    } = await axios.get(URL, {
+    } = await axios.get(`https://travel-advisor.p.rapidapi.com/${type}/list-in-boundary`, {
         params: {
           bl_latitude: sw.lat(),
           tr_latitude: ne.lat(),
