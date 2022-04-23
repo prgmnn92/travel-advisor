@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { AppBar, Toolbar, Typography, InputBase, Box } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
-import { alpha } from "@mui/material";
 import { Autocomplete } from "@react-google-maps/api";
 
 export default function Header({ setCoordinates }) {

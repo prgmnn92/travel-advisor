@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { memo, useCallback, useEffect, useRef } from "react";
 import {
   GoogleMap,
   useLoadScript,
@@ -18,23 +18,19 @@ function Map({
   setChildClicked,
 }) {
   const mapRef = useRef(null);
-  const handleLoad = (map) => {
+  const handleLoad = useCallback((map) => {
     mapRef.current = map;
-  };
+  }, []);
+
   const isDesktop = useMediaQuery("(min-width:600px)");
-//   const [requestCounter, setRequestCounter] = useState(0);
-//   const [requestState, setRequestState] = useState(false);
-//   const [requestInterval, setRequestInterval] = useState(null);
+
   const zoom = 15;
 
   const { isLoaded, loadError } = useLoadScript({
-    googleMapsApiKey: "AIzaSyAou1k3EVXFhA4HvNP_OPWPh7dsZpB7Zlc", // ,
-    // ...otherOptions
+    googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
   });
 
-  //const centerOptions = useMemo(() => ({ lat: coordinates.lat, lng: coordinates.lng }), [coordinates])
-
-  const handleCenterChanged = () => {
+  const handleCenterChanged = useCallback(() => {
     if (
       mapRef.current !== undefined &&
       mapRef.current !== null &&
@@ -49,39 +45,25 @@ function Map({
         setCoordinates !== undefined &&
         setBounds !== undefined
       ) {
-        setCoordinates({ lat: newCenter.lat(), lng: newCenter.lng() });
+        setCoordinates({ lat: newCenter?.lat(), lng: newCenter?.lng() });
         setBounds({ ne: newBoundNE, sw: newBoundSW });
       }
     }
-  };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mapRef, coordinates]);
 
-//   useEffect(() => {
-//     let interval = null;
-//     console.log(requestState);
+  useEffect(() => {
+    if(!isLoaded)return
+    handleCenterChanged()
+  
 
-//     if (requestState) { 
-//       clearInterval(interval);
-//       interval = setInterval(() => {
-//         //if (requestState) return;
-//         console.log(requestCounter);
-//         setRequestCounter(requestCounter + 1);
-//         if (requestCounter >= 3) {
-//           handleCenterChanged()
-//           setRequestCounter(0);
-//           setRequestState(false);
-//         }
-//       }, 100);
-//     } 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoaded])
+  
 
-//     return () => {
-//       clearInterval(interval);
-//     };
-//   }, [requestState, requestCounter]);
-
-  //intervall ist false
-  //onBound interval wird true
-  //solange true ist counter auf 0
-  //wenn false zähle hoch bis 3
+  const handleOnUnmount = useCallback(() => {
+    mapRef.current = null
+  }, [])
 
   if (loadError) {
     return <div>Map cannot be loaded right now, sorry.</div>;
@@ -92,22 +74,23 @@ function Map({
       {isLoaded ? (
         <Box
           sx={{
-            height: "96vh",
+            height: "85vh",
             width: "100%",
           }}
         >
-          <LoadScriptNext googleMapsApiKey="AIzaSyAou1k3EVXFhA4HvNP_OPWPh7dsZpB7Zlc">
+          <LoadScriptNext googleMapsApiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY}>
             <GoogleMap
-              resetBoundsOnResize
+              //resetBoundsOnResize
               mapContainerStyle={{
                 width: "100%",
                 height: "100%",
               }}
               center={coordinates}
               onLoad={handleLoad}
+              onUnmount={handleOnUnmount}
               onDragEnd={() => {
                 if (mapRef.current !== null) {
-                  handleCenterChanged();
+                  handleCenterChanged()
                 }
               }}
               onZoomChanged={() => {
@@ -150,7 +133,7 @@ function Map({
                             display: "flex",
                             flexDirection: "column",
                             justifyContent: "center",
-                            width: "100px",
+                            width: "110px",
                             zIndex: 1,
                             "&:hover": { zIndex: 2 },
                           }}
@@ -162,6 +145,9 @@ function Map({
                           <img
                             style={{
                               cursor: "pointer",
+                              maxHeight: "75px",
+                              backgroundPosition: "center",
+                              backgroundSize: "cover"
                             }}
                             src={
                               place.photo
@@ -192,4 +178,5 @@ function Map({
   );
 }
 
-export default Map;
+
+export default memo(Map)

@@ -19,7 +19,7 @@ export default function PlaceDetails({ place, selected, refProp }) {
   }
 
   return (
-    <Card elevation={6}>
+    <Card key={place.name} elevation={6}>
       <CardMedia
         style={{ height: 350 }}
         image={
@@ -58,7 +58,7 @@ export default function PlaceDetails({ place, selected, refProp }) {
             my={1}
             alignItems="center"
           >
-            <img src={award.images.small} />
+            <img src={award.images.small} alt={award.display_name}/>
             <Typography variant="subtitle2" color="textSecondary">
               {award.display_name}
             </Typography>

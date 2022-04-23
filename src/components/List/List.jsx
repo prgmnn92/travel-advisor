@@ -20,8 +20,9 @@ export default function List({
   childClicked,
   loading,
 }) {
-  const [elRefs, setElRefs] = useState([]);
 
+  // create referencen for scroll into view
+  const [elRefs, setElRefs] = useState([]);
   useEffect(() => {
     setElRefs((refs) =>
       Array(places?.length)
@@ -29,6 +30,8 @@ export default function List({
         .map((_, i) => refs[i] || createRef())
     );
   }, [places]);
+
+  const ratingOptions = [2.0, 3.0, 4.0, 4.5]
 
   return (
     <Box
@@ -40,11 +43,7 @@ export default function List({
       <Typography variant="h4">
         Restaurants, Hotels & Attractions around you
       </Typography>
-      {loading ? (
-        <Spinner />
-      ) : (
-        <>
-          <FormControl
+      <FormControl
             sx={{
               margin: 1,
               minWidth: 120,
@@ -68,11 +67,13 @@ export default function List({
             <InputLabel>Rating</InputLabel>
             <Select value={rating} onChange={(e) => setRating(e.target.value)}>
               <MenuItem value={0}>All</MenuItem>
-              <MenuItem value={3}>Above 3.0</MenuItem>
-              <MenuItem value={4}>Above 4.0</MenuItem>
-              <MenuItem value={4.5}>Above 4.5</MenuItem>
+              {ratingOptions.map((option, id) => <MenuItem key={id} value={option}>Above {option.toFixed(1)}</MenuItem>)}
             </Select>
           </FormControl>
+      {loading ? (
+        <Spinner />
+      ) : (
+        <>
           <Grid
             container
             spacing={3}

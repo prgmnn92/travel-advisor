@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { CssBaseline, Grid } from "@mui/material";
 
 import Header from "./components/Header/Header";
@@ -40,6 +40,7 @@ function App() {
     navigator.geolocation.getCurrentPosition(({coords: { latitude, longitude }}) => {
       setCoordinates({lat: latitude, lng: longitude})
     })
+      
   }, [])
   
 
@@ -58,7 +59,7 @@ function App() {
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <Header setCoordinates={setCoordinates} />
-        <Grid container spacing={3}>
+        <Grid sx={{height: "100%"}} container spacing={3}>
           <Grid item sm={12} md={4}>
             <List setType={setType} setRating={setRating} type={type} rating={rating} places={filteredPlaces.length ? filteredPlaces : places} childClicked={childClicked} loading={loading}/>
           </Grid>
